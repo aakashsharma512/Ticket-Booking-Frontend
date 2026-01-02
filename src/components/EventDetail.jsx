@@ -71,7 +71,7 @@ function EventDetail() {
       
       if (result.status && result.data) {
         setSeatDetails(result.data);
-        setSelectedSeats([]);
+        // Don't clear selectedSeats here - only clear when section/row changes
       }
     } catch (error) {
       console.error('Error fetching seat details:', error);
@@ -80,6 +80,10 @@ function EventDetail() {
 
   useEffect(() => {
     if (!id) return;
+    // Reset selection state when event ID changes or component mounts
+    setSelectedSeats([]);
+    setSeatDetails([]);
+    setMessage(null);
     fetchEventDetails();
     fetchAvailability();
   }, [id, fetchEventDetails, fetchAvailability]);
@@ -130,7 +134,8 @@ function EventDetail() {
         body: JSON.stringify({
           section: selectedSection,
           row: selectedRow,
-          quantity: selectedSeats.length
+          quantity: selectedSeats.length,
+          seatNumbers: selectedSeats.sort((a, b) => a - b)
         })
       });
 
